@@ -11,7 +11,8 @@ Tiny: https://tinycircuits.com/
 - [x] raspi
 - [x] linuxdrm
 - [x] generic
-- [ ] Validate color conversions
+- [x] Validate color conversions
+- [ ] Soft lib (image, font, etc)
 - [ ] Test framework
 - [ ] Example game
 - [ ] Coordinate SD card image from Makefile

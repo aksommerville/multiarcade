@@ -29,6 +29,99 @@ int16_t audio_next() {
   }
 }
 
+/* Render scene.
+ */
+ 
+static void fill_row(ma_pixel_t *dst,ma_pixel_t src) {
+  int8_t i=96;
+  for (;i-->0;dst++) *dst=src;
+}
+ 
+static void render_scene(ma_pixel_t *v,uint16_t input) {
+
+  /* Draw a test pattern, four rows each of:
+   *  - Pure red
+   *  - Pure green
+   *  - Pure blue
+   *  - White
+   *  - Black
+   *  - 50% gray.
+   * Fills the first 24 rows.
+   */
+  ma_pixel_t *dstrow=v;
+  uint8_t y=0;
+  #if MA_PIXELSIZE==16
+    for (;y< 4;y++,dstrow+=96) fill_row(dstrow,0x1f00);
+    for (;y< 8;y++,dstrow+=96) fill_row(dstrow,0xe007);
+    for (;y<12;y++,dstrow+=96) fill_row(dstrow,0x00f8);
+    for (;y<16;y++,dstrow+=96) fill_row(dstrow,0xffff);
+    for (;y<20;y++,dstrow+=96) fill_row(dstrow,0x0000);
+    for (;y<24;y++,dstrow+=96) fill_row(dstrow,0x1084);
+  #else
+    for (;y< 4;y++,dstrow+=96) fill_row(dstrow,0x03);
+    for (;y< 8;y++,dstrow+=96) fill_row(dstrow,0x1c);
+    for (;y<12;y++,dstrow+=96) fill_row(dstrow,0xe0);
+    for (;y<16;y++,dstrow+=96) fill_row(dstrow,0xff);
+    for (;y<20;y++,dstrow+=96) fill_row(dstrow,0x00);
+    for (;y<24;y++,dstrow+=96) fill_row(dstrow,0x92);
+  #endif
+  
+  /* Black background for the remainder.
+   */
+  for (;y<64;y++,dstrow+=96) fill_row(dstrow,0);
+  
+  /* Show us the pixel size.
+   */
+  #if MA_PIXELSIZE==16
+    v[96*25+1]=0xffff;
+    v[96*26+1]=0xffff;
+    v[96*27+1]=0xffff;
+    v[96*28+1]=0xffff;
+    v[96*29+1]=0xffff;
+    v[96*25+4]=0xffff;
+    v[96*25+5]=0xffff;
+    v[96*26+3]=0xffff;
+    v[96*27+3]=0xffff;
+    v[96*27+4]=0xffff;
+    v[96*28+3]=0xffff;
+    v[96*28+5]=0xffff;
+    v[96*29+4]=0xffff;
+  #else
+    v[96*25+2]=0xff;
+    v[96*26+1]=0xff;
+    v[96*26+3]=0xff;
+    v[96*27+2]=0xff;
+    v[96*28+1]=0xff;
+    v[96*28+3]=0xff;
+    v[96*29+2]=0xff;
+  #endif
+  
+  /* Show us the input.
+   * 9x5 pixels
+   */
+  ma_pixel_t *inpic=v+96*25+7;
+  #if MA_PIXELSIZE==16
+    ma_pixel_t bgcolor=0x1084;
+    ma_pixel_t fgcolor=0x0002;
+  #else
+    ma_pixel_t bgcolor=0x92;
+    ma_pixel_t fgcolor=0x08;
+  #endif
+  uint8_t _y=0;
+  for (;_y<5;_y++) {
+    uint8_t _x=0;
+    for (;_x<9;_x++) {
+      inpic[96*_y+_x]=bgcolor;
+    }
+  }
+  if (input&MA_BUTTON_UP)    inpic[96*1+2]=fgcolor;
+  if (input&MA_BUTTON_DOWN)  inpic[96*3+2]=fgcolor;
+  if (input&MA_BUTTON_LEFT)  inpic[96*2+1]=fgcolor;
+  if (input&MA_BUTTON_RIGHT) inpic[96*2+3]=fgcolor;
+  if (input&MA_BUTTON_A)     inpic[96*2+7]=fgcolor;
+  if (input&MA_BUTTON_B)     inpic[96*2+5]=fgcolor;
+}
+
 /* Update.
  */
  
@@ -43,6 +136,9 @@ void loop() {
   else if (input&MA_BUTTON_RIGHT) auhalfperiod=100;
   else auhalfperiod=0;
   
+  render_scene(image_fb.v,input);
+  
+  #if 0
   #if MA_PIXELSIZE==16
     ma_pixel_t checka=0x8410;
     ma_pixel_t checkb=0xc618;
@@ -91,6 +187,7 @@ void loop() {
   if (input&MA_BUTTON_B) {
     image_fb.v[32*96+60]=white;
   }
+  #endif
   
   ma_send_framebuffer(image_fb.v);
 }

@@ -163,7 +163,12 @@ static inline ma_pixel_t ma_pixel_from_rgb(const uint8_t *rgb) {
   #if MA_PIXELSIZE==8
     return (rgb[0]>>6)|((rgb[1]&0xe0)>>3)|(rgb[2]&0xe0);
   #elif MA_PIXELSIZE==16
-    return (rgb[0]>>3)|((rgb[1]&0xfc)<<3)|((rgb[2]&0xf8)<<8);
+    // 16-bit BGR565 but always big-endian: It's backward on little-endian machines (like the Tiny).
+    #if 0 //TODO big-endian host
+      return (rgb[0]>>3)|((rgb[1]&0xfc)>>1)|((rgb[2]&0xf8)<<8);
+    #else
+      return ((rgb[0]&0xf8)<<5)|((rgb[1]&0x1c)<<7)|(rgb[1]>>5)|(rgb[2]&0xf8);
+    #endif
   #endif
 }
 
@@ -173,9 +178,9 @@ static inline void ma_rgb_from_pixel(uint8_t *rgb,ma_pixel_t pixel) {
     rgb[1]=pixel&0x1c; rgb[1]|=rgb[1]<<3; rgb[1]|=rgb[1]>>6;
     rgb[2]=pixel&0xe0; rgb[2]|=rgb[2]>>3; rgb[2]|=rgb[2]>>6;
   #elif MA_PIXELSIZE==16
-    rgb[0]=(pixel&0xf800)>>8; rgb[0]|=rgb[0]>>5;
-    rgb[1]=(pixel&0x07e0)>>3; rgb[1]|=rgb[1]>>6;
-    rgb[2]=pixel<<3; rgb[2]|=rgb[2]>>5;
+    rgb[0]=(pixel&0x1f00)>>5; rgb[0]|=rgb[0]>>5;
+    rgb[1]=((pixel&0xe000)>>11)|((pixel&0x0007)<<5); rgb[1]|=rgb[1]>>6;
+    rgb[2]=pixel&0x00f8; rgb[2]|=rgb[2]>>5;
   #endif
 }
 
