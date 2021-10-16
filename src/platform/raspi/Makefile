@@ -1,7 +1,7 @@
 # Makefile for "raspi" platform.
 
 # Pixelsize 8 or 16, both kosher.
-_CCDEF:=-DMA_PIXELSIZE=8 -DMA_APP_NAME=\"$(PROJECT_NAME)\"
+_CCDEF:=-DMA_PIXELSIZE=16 -DMA_APP_NAME=\"$(PROJECT_NAME)\"
 _CCINC:=-Isrc/platform/raspi -Isrc/common -I/opt/vc/include -I/opt/vc/include/interface/vcos/pthreads -I/opt/vc/include/interface/vmcs_host/linux
 _CCERR:=-Werror -Wimplicit
 

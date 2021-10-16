@@ -17,3 +17,4 @@ Tiny: https://tinycircuits.com/
 - [ ] Example game
 - [ ] Coordinate SD card image from Makefile
 - [ ] Auto-re-deploy menu via Makefile
+- [ ] raspi bcm: Need a blotter layer to cover console

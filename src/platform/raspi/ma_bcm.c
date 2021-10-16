@@ -176,7 +176,8 @@ static void ma_bcm_convert(void *output,struct ma_bcm *bcm,const void *input) {
       #if MA_PIXELSIZE==8
         uint32_t pixel=bcm->ctab[*src];
       #else
-        uint16_t pixel=*src;
+        uint16_t pixel=((*src)>>8)|((*src)<<8); // first swap byte order
+        pixel=(pixel&0x07e0)|(pixel>>11)|(pixel<<11); // then swap red and blue
       #endif
       int ri=bcm->scale;
       for (;ri-->0;dst++) *dst=pixel;
