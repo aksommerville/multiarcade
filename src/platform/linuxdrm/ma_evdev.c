@@ -1,4 +1,4 @@
-#include "ma_ld_internal.h"
+#include "ma_drm_internal.h"
 #include <fcntl.h>
 #include <unistd.h>
 #include <dirent.h>
@@ -470,7 +470,7 @@ static int ma_evdev_event(
       } break;
       
     case EV_KEY: switch (event->code) {
-        case KEY_ESC: ma_ld_quit_requested=1; return 0;
+        case KEY_ESC: ma_drm_quit_requested=1; return 0; // A VCS might have no other means of quitting, important!
         case KEY_UP: return ma_evdev_key(evdev,device,MA_BUTTON_UP,event->value);
         case KEY_DOWN: return ma_evdev_key(evdev,device,MA_BUTTON_DOWN,event->value);
         case KEY_LEFT: return ma_evdev_key(evdev,device,MA_BUTTON_LEFT,event->value);

@@ -59,9 +59,6 @@ uint8_t ma_init(struct ma_init_params *params) {
       ma_ld_init_params.audio_rate=ma_pulse_get_rate(ma_pulse);
     }
   }
-  if (ma_ld_init_params.audio_rate) {
-    fprintf(stderr,"init audio %d\n",ma_ld_init_params.audio_rate);
-  }
   
   return 1;
 }

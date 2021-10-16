@@ -9,7 +9,7 @@ Tiny: https://tinycircuits.com/
 - [ ] tinyarcade
 - [x] linuxdefault
 - [x] raspi
-- [ ] linuxdrm
+- [x] linuxdrm
 - [x] generic
 - [ ] Test framework
 - [ ] Example game

@@ -48,8 +48,8 @@ void loop() {
     ma_pixel_t checkb=0xc618;
     ma_pixel_t white=0xffff;
   #else
-    ma_pixel_t checka=0x80;
-    ma_pixel_t checkb=0x40;
+    ma_pixel_t checka=0x92;
+    ma_pixel_t checkb=0xdb;
     ma_pixel_t white=0xff;
   #endif
   ma_pixel_t *dst=image_fb.v;
@@ -60,6 +60,10 @@ void loop() {
       *dst=((xi&1)==(yi&1))?checka:checkb;
     }
   }
+  
+  #if MA_PIXELSIZE==8
+    for (dst=image_fb.v,yi=0;yi<256;yi++,dst++) *dst=yi;
+  #endif
   
   if (input&MA_BUTTON_UP) {
     image_fb.v[21*96+32]=white;
