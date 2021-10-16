@@ -1,8 +1,9 @@
 # Makefile for "linuxdefault" platform.
 
+# 8 and 16 both good for pixelsize.
+_CCDEF:=-DMA_PIXELSIZE=16 -DMA_APP_NAME=\"$(PROJECT_NAME)\"
 _CCINC:=-Isrc/platform/linuxdefault -Isrc/common
 _CCERR:=-Werror -Wimplicit
-_CCDEF:=-DMA_PIXELSIZE=16 -DMA_APP_NAME=\"$(PROJECT_NAME)\"
 
 linuxdefault_CC:=gcc -c -MMD -O2 $(_CCINC) $(_CCERR) $(_CCDEF)
 linuxdefault_LD:=gcc

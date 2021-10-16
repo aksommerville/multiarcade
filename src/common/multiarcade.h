@@ -170,7 +170,7 @@ static inline void ma_rgb_from_pixel(uint8_t *rgb,ma_pixel_t pixel) {
     rgb[2]=pixel&0xe0; rgb[2]|=rgb[2]>>3; rgb[2]|=rgb[2]>>6;
   #elif MA_PIXELSIZE==16
     rgb[0]=(pixel&0xf800)>>8; rgb[0]|=rgb[0]>>5;
-    rgb[1]=(pixel&0x03e0)>>2; rgb[1]|=rgb[1]>>6;
+    rgb[1]=(pixel&0x07e0)>>3; rgb[1]|=rgb[1]>>6;
     rgb[2]=pixel<<3; rgb[2]|=rgb[2]>>5;
   #endif
 }

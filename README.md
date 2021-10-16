@@ -7,8 +7,8 @@ Tiny: https://tinycircuits.com/
 ## TODO
 
 - [ ] tinyarcade
-- [ ] linuxdefault
-- [ ] raspi
+- [x] linuxdefault
+- [x] raspi
 - [ ] linuxdrm
 - [x] generic
 - [ ] Test framework
