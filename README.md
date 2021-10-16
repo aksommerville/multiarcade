@@ -12,9 +12,10 @@ Tiny: https://tinycircuits.com/
 - [x] linuxdrm
 - [x] generic
 - [x] Validate color conversions
-- [ ] Soft lib (image, font, etc)
+- [x] Soft lib (image, font, etc)
 - [ ] Test framework
 - [ ] Example game
 - [ ] Coordinate SD card image from Makefile
 - [ ] Auto-re-deploy menu via Makefile
 - [ ] raspi bcm: Need a blotter layer to cover console
+- [ ] Synthesizer? Or some layer of audio support.

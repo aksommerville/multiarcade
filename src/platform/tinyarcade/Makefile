@@ -42,6 +42,7 @@ $(TINY_TMPDIR_SOLO) $(TINY_TMPDIR_HOSTED) $(TINY_CACHEDIR_SOLO) $(TINY_CACHEDIR_
 
 TINY_BIN_SOLO:=out/$(PROJECT_NAME)-solo.bin
 TINY_BIN_HOSTED:=out/$(PROJECT_NAME)-hosted.bin
+TINY_PACKAGE:=out/$(PROJECT_NAME).zip
 
 TINY_SRCFILES:= \
   $(CFILES_COMMON) $(CFILES_MAIN) $(DATA_DSTFILES) \
@@ -99,4 +100,15 @@ launch:$(TINY_BIN_SOLO); \
   sleep 2 ; \
   $(MA_PKGROOT)/arduino/tools/bossac/1.7.0-arduino3/bossac -i -d --port=$(MA_PORT) -U true -i -e -w $(TINY_BIN_SOLO) -R
   
-#TODO Helper rules for assembling the SD card.
+#TODO Shipping data files with the package, drop them in the `cp` line.
+# I guess a README would be nice, too.
+$(TINY_PACKAGE):$(TINY_BIN_HOSTED) $(DATA_TSV);$(PRECMD) \
+  rm -rf out/$(PROJECT_NAME) ; \
+  mkdir out/$(PROJECT_NAME) || exit 1 ; \
+  cp $(DATA_TSV) out/$(PROJECT_NAME)/$(PROJECT_NAME).tsv || exit 1 ; \
+  cp $(TINY_BIN_HOSTED) out/$(PROJECT_NAME)/$(PROJECT_NAME).bin || exit 1; \
+  cd out ; \
+  zip -r $(PROJECT_NAME).zip $(PROJECT_NAME) >/dev/null || exit 1 ; \
+  rm -r $(PROJECT_NAME)
+  
+sdcard:$(TINY_PACKAGE);etc/tool/sdcard.sh $(TINY_PACKAGE)

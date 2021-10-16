@@ -18,7 +18,7 @@ all:data
 
 ifneq (,$(MA_BUILD_TINY))
   include src/platform/tinyarcade/Makefile
-  tiny:$(TINY_BIN_SOLO) $(TINY_BIN_HOSTED)
+  tiny:$(TINY_BIN_SOLO) $(TINY_BIN_HOSTED) $(DATA_TSV) $(TINY_PACKAGE)
   all:tiny
 endif
 
