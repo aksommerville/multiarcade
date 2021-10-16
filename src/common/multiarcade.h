@@ -159,7 +159,14 @@ void ma_image_fill_rect(
   ma_pixel_t pixel
 );
 
+#if MA_PIXELSIZE==8
+  #define MA_PIXEL(r,g,b) ((r>>6)|((g&0xe0)>>3)|(b&0xe0))
+#else
+  #define MA_PIXEL(r,g,b) (((r&0xf8)<<5)|((g&0x1c)<<11)|(g>>5)|(b&0xf8))
+#endif
+
 static inline ma_pixel_t ma_pixel_from_rgb(const uint8_t *rgb) {
+  return MA_PIXEL(rgb[0],rgb[1],rgb[2]);
   #if MA_PIXELSIZE==8
     return (rgb[0]>>6)|((rgb[1]&0xe0)>>3)|(rgb[2]&0xe0);
   #elif MA_PIXELSIZE==16
@@ -167,7 +174,7 @@ static inline ma_pixel_t ma_pixel_from_rgb(const uint8_t *rgb) {
     #if 0 //TODO big-endian host
       return (rgb[0]>>3)|((rgb[1]&0xfc)>>1)|((rgb[2]&0xf8)<<8);
     #else
-      return ((rgb[0]&0xf8)<<5)|((rgb[1]&0x1c)<<7)|(rgb[1]>>5)|(rgb[2]&0xf8);
+      return ((rgb[0]&0xf8)<<5)|((rgb[1]&0x1c)<<11)|(rgb[1]>>5)|(rgb[2]&0xf8);
     #endif
   #endif
 }

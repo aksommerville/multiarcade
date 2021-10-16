@@ -16,9 +16,11 @@ linuxdefault_EXE:=$(linuxdefault_OUTDIR)/$(PROJECT_NAME)
 
 linuxdefault_CFILES:=$(shell find src/platform/linuxdefault -name '*.c') $(CFILES_COMMON) $(CFILES_MAIN)
 linuxdefault_OFILES:=$(patsubst src/%.c,$(linuxdefault_MIDDIR)/%.o,$(linuxdefault_CFILES))
+linuxdefault_OFILES+=$(patsubst mid/data/%.c,$(linuxdefault_MIDDIR)/data/%.o,$(DATA_DSTFILES))
 -include $(linuxdefault_OFILES:.o=.d)
 
 $(linuxdefault_MIDDIR)/%.o:src/%.c;$(PRECMD) $(linuxdefault_CC) -o $@ $<
+$(linuxdefault_MIDDIR)/data/%.o:mid/data/%.c;$(PRECMD) $(linuxdefault_CC) -o $@ $<
 
 $(linuxdefault_EXE):$(linuxdefault_OFILES);$(PRECMD) $(linuxdefault_LD) -o $@ $^ $(linuxdefault_LDPOST)
 

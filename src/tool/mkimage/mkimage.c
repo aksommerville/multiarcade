@@ -20,7 +20,7 @@ static int text_from_png_rgba_image(void *dstpp,const struct png_image *image,co
   int i=image->w*image->h;
   for (;i-->0;v++) if (!*v) {
     if (pixelsize==8) colorkey=0x1c;
-    else colorkey=0x07e0;
+    else colorkey=0xe007;
     break;
   }
   
@@ -31,7 +31,8 @@ static int text_from_png_rgba_image(void *dstpp,const struct png_image *image,co
         dstc+=err; \
         break; \
       } \
-      if (dsta>32768) { \
+      if (dsta>100000) { \
+        fprintf(stderr,"image too large\n"); \
         free(dst); \
         return -1; \
       } \
@@ -48,7 +49,7 @@ static int text_from_png_rgba_image(void *dstpp,const struct png_image *image,co
   i=image->w*image->h;
   int dstw=0;
   const uint8_t *src=image->pixels;
-  for (;i-->0;src++) {
+  for (;i-->0;src+=4) {
     if (dstw>80) {
       APPEND("\n  ")
       dstw=0;
@@ -68,8 +69,8 @@ static int text_from_png_rgba_image(void *dstpp,const struct png_image *image,co
       if (colorkey&&!src[3]) {
         pixel=colorkey;
       } else {
-        pixel=(src[0]>>3)|((src[1]&0xfc)<<3)|((src[2]&0xf8)<<8);
-        if (colorkey&&(pixel==colorkey)) pixel^=0x0020;
+        pixel=((src[0]&0xf8)<<5)|((src[1]&0x1c)<<11)|(src[1]>>5)|(src[2]&0xf8);
+        if (colorkey&&(pixel==colorkey)) pixel^=0x2000;
       }
       APPEND("0x%04x,",pixel)
       dstw+=7;
@@ -89,6 +90,7 @@ static int text_from_png_image(void *dstpp,const struct png_image *image,const c
     png_image_cleanup(&rgba);
     return -1;
   }
+    
   if (pixelsize) {
     int err=text_from_png_rgba_image(dstpp,&rgba,name,namec,pixelsize);
     png_image_cleanup(&rgba);

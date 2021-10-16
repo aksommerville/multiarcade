@@ -16,9 +16,11 @@ raspi_EXE:=$(raspi_OUTDIR)/$(PROJECT_NAME)
 
 raspi_CFILES:=$(shell find src/platform/raspi -name '*.c') $(CFILES_COMMON) $(CFILES_MAIN)
 raspi_OFILES:=$(patsubst src/%.c,$(raspi_MIDDIR)/%.o,$(raspi_CFILES))
+raspi_OFILES+=$(patsubst mid/data/%.c,$(raspi_MIDDIR)/data/%.o,$(DATA_DSTFILES))
 -include $(raspi_OFILES:.o=.d)
 
 $(raspi_MIDDIR)/%.o:src/%.c;$(PRECMD) $(raspi_CC) -o $@ $<
+$(raspi_MIDDIR)/data/%.o:mid/data/%.c;$(PRECMD) $(raspi_CC) -o $@ $<
 
 $(raspi_EXE):$(raspi_OFILES);$(PRECMD) $(raspi_LD) -o $@ $^ $(raspi_LDPOST)
 

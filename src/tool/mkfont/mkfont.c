@@ -34,7 +34,7 @@ static int font_text_from_glyphs(void *dstpp,const uint8_t *metrics,const uint32
   
   int y,x;
   APPEND("#include \"multiarcade.h\"\n")
-  APPEND("const struct ma_font ma_font_%.*s={\n",namec,name)
+  APPEND("const struct ma_font font_%.*s={\n",namec,name)
   APPEND("  .metrics={\n")
   for (y=6;y-->0;) {
     APPEND("    ")

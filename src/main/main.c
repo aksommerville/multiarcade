@@ -2,17 +2,23 @@
 #include <stdio.h>
 #include <string.h>
 
+extern struct ma_image image_tiles;
+extern struct ma_font font_basic;
+
 /* Globals.
  */
  
 MA_IMAGE_DECLARE(fb,96,64,0,0)
 
-static ma_pixel_t nextpixel=0;
-static uint16_t nextpixelp=0;
+static struct ma_image tile_floor,tile_box,tile_man;
 
 static int16_t aulevel=2000; // toggles positive/negative
 static uint16_t auhalfperiod=0; // 0=silent
 static uint16_t aup=0;
+
+static int16_t manx=38,many=43;
+static int16_t mandx=0,mandy=0;
+static uint16_t mandxtime=0,mandytime=0;
 
 /* Audio.
  */
@@ -120,6 +126,29 @@ static void render_scene(ma_pixel_t *v,uint16_t input) {
   if (input&MA_BUTTON_RIGHT) inpic[96*2+3]=fgcolor;
   if (input&MA_BUTTON_A)     inpic[96*2+7]=fgcolor;
   if (input&MA_BUTTON_B)     inpic[96*2+5]=fgcolor;
+  
+  /* Copy some tiles.
+   */
+  ma_image_blit_unchecked(&image_fb,20,25,&tile_floor);
+  ma_image_blit_unchecked(&image_fb,32,25,&tile_floor);
+  ma_image_blit_unchecked(&image_fb,44,25,&tile_box);
+  ma_image_blit_unchecked(&image_fb,20,37,&tile_floor);
+  ma_image_blit_unchecked(&image_fb,32,37,&tile_floor);
+  ma_image_blit_unchecked(&image_fb,44,37,&tile_floor);
+  ma_image_blit_unchecked(&image_fb,20,49,&tile_box);
+  ma_image_blit_unchecked(&image_fb,32,49,&tile_floor);
+  ma_image_blit_unchecked(&image_fb,44,49,&tile_floor);
+  
+  /* And finally draw the sprites.
+   */
+  ma_image_blit_unchecked(&image_fb,manx-6,many-6,&tile_man);
+  
+  /* Oooh and also, some text.
+   */
+  ma_font_render(&image_fb,57,24,&font_basic,"Text!",5,MA_PIXEL(0xff,0xff,0xff));
+  ma_font_render(&image_fb,57,32,&font_basic,"blue?",5,MA_PIXEL(0x00,0x00,0xff));
+  ma_font_render(&image_fb,57,40,&font_basic,"GREEN",6,MA_PIXEL(0x00,0xff,0x00));
+  ma_font_render(&image_fb,57,48,&font_basic,"Red.",4,MA_PIXEL(0xff,0x00,0x00));
 }
 
 /* Update.
@@ -136,73 +165,49 @@ void loop() {
   else if (input&MA_BUTTON_RIGHT) auhalfperiod=100;
   else auhalfperiod=0;
   
+  manx+=mandx;
+  if (manx<26) { manx=26; if (mandx<0) mandx=-mandx; }
+  else if (manx>50) { manx=50; if (mandx>0) mandx=-mandx; }
+  if (mandxtime) mandxtime--;
+  else { mandx=rand()%3-1; mandxtime=30+rand()%100; }
+  many+=mandy;
+  if (many<31) { many=31; if (mandy<0) mandy=-mandy; }
+  else if (many>55) { many=55; if (mandy>0) mandy=-mandy; }
+  if (mandytime) mandytime--;
+  else { mandy=rand()%3-1; mandytime=30+rand()%100; }
+  
   render_scene(image_fb.v,input);
   
-  #if 0
-  #if MA_PIXELSIZE==16
-    ma_pixel_t checka=0x8410;
-    ma_pixel_t checkb=0xc618;
-    ma_pixel_t white=0xffff;
-  #else
-    ma_pixel_t checka=0x92;
-    ma_pixel_t checkb=0xdb;
-    ma_pixel_t white=0xff;
-  #endif
-  ma_pixel_t *dst=image_fb.v;
-  int yi=image_fb.h;
-  while (yi-->0) {
-    int xi=image_fb.w;
-    for (;xi-->0;dst++) {
-      *dst=((xi&1)==(yi&1))?checka:checkb;
-    }
-  }
-  
-  #if MA_PIXELSIZE==8
-    for (dst=image_fb.v,yi=0;yi<256;yi++,dst++) *dst=yi;
-  #endif
-  
-  if (input&MA_BUTTON_UP) {
-    image_fb.v[21*96+32]=white;
-    image_fb.v[22*96+31]=white;
-    image_fb.v[22*96+33]=white;
-  }
-  if (input&MA_BUTTON_DOWN) {
-    image_fb.v[43*96+32]=white;
-    image_fb.v[42*96+31]=white;
-    image_fb.v[42*96+33]=white;
-  }
-  if (input&MA_BUTTON_LEFT) {
-    image_fb.v[32*96+20]=white;
-    image_fb.v[31*96+21]=white;
-    image_fb.v[33*96+21]=white;
-  }
-  if (input&MA_BUTTON_RIGHT) {
-    image_fb.v[32*96+44]=white;
-    image_fb.v[31*96+43]=white;
-    image_fb.v[33*96+43]=white;
-  }
-  if (input&MA_BUTTON_A) {
-    image_fb.v[32*96+80]=white;
-  }
-  if (input&MA_BUTTON_B) {
-    image_fb.v[32*96+60]=white;
-  }
-  #endif
-  
   ma_send_framebuffer(image_fb.v);
+}
+
+/* Slice tiles from the sheet.
+ */
+ 
+static void init_tiles() {
+  const uint8_t colc=4;
+  const uint8_t rowc=4;
+  const uint8_t colw=image_tiles.w/colc;
+  const uint8_t rowh=image_tiles.h/rowc;
+  #define TILE(name,col,row) ma_image_crop(&tile_##name,&image_tiles,col*colw,row*rowh,colw,rowh);
+  TILE(floor,0,0)
+  TILE(box,1,0)
+  TILE(man,0,1)
+  #undef TILE
 }
 
 /* Setup.
  */
  
 void setup() {
-  //fprintf(stderr,"%s\n",__func__);
+  init_tiles();
   struct ma_init_params params={
     .videow=image_fb.w,
     .videoh=image_fb.h,
-    .rate=60, // request that loop() be called at 60 Hz
+    .rate=60,
     .audio_rate=22050,
   };
   if (!ma_init(&params)) return;
   if ((params.videow!=image_fb.w)||(params.videoh!=image_fb.h)) return;
+  srand(millis());
 }

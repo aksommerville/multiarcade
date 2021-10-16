@@ -6,10 +6,29 @@
 /* Current time in microseconds.
  */
  
+static int64_t ma_raspi_first_time=0;
+ 
 int64_t ma_raspi_now() {
   struct timeval tv={0};
   gettimeofday(&tv,0);
-  return (int64_t)tv.tv_sec*1000000ll+tv.tv_usec;
+  int64_t now=(int64_t)tv.tv_sec*1000000ll+tv.tv_usec;
+  if (!ma_raspi_first_time) ma_raspi_first_time=now;
+  return now;
+}
+
+/* Public time functions.
+ */
+ 
+uint32_t millis() {
+  return (ma_raspi_now()-ma_raspi_first_time)/1000;
+}
+
+uint32_t micros() {
+  return ma_raspi_now()-ma_raspi_first_time;
+}
+
+void delay(uint32_t ms) {
+  usleep(ms*1000);
 }
 
 /* Audio callback.

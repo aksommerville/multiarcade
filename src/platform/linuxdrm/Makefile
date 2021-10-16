@@ -18,9 +18,11 @@ linuxdrm_EXE:=$(linuxdrm_OUTDIR)/$(PROJECT_NAME)
 
 linuxdrm_CFILES:=$(shell find src/platform/linuxdrm -name '*.c') $(CFILES_COMMON) $(CFILES_MAIN)
 linuxdrm_OFILES:=$(patsubst src/%.c,$(linuxdrm_MIDDIR)/%.o,$(linuxdrm_CFILES))
+linuxdrm_OFILES+=$(patsubst mid/data/%.c,$(linuxdrm_MIDDIR)/data/%.o,$(DATA_DSTFILES))
 -include $(linuxdrm_OFILES:.o=.d)
 
 $(linuxdrm_MIDDIR)/%.o:src/%.c;$(PRECMD) $(linuxdrm_CC) -o $@ $<
+$(linuxdrm_MIDDIR)/data/%.o:mid/data/%.c;$(PRECMD) $(linuxdrm_CC) -o $@ $<
 
 $(linuxdrm_EXE):$(linuxdrm_OFILES);$(PRECMD) $(linuxdrm_LD) -o $@ $^ $(linuxdrm_LDPOST)
 
