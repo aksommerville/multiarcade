@@ -7,6 +7,10 @@
 #include <stdlib.h>
 #include <stdint.h>
 
+#ifdef __cplusplus
+  extern "C" {
+#endif
+
 /* Pixel size for all images must be established at compile time,
  * in the interest of reducing code size.
  * May be 8, 16, or 32. TinyArcade only supports 8 or 16.
@@ -203,4 +207,7 @@ int16_t ma_font_measure(
   const char *src,int16_t srcc
 );
 
+#ifdef __cplusplus
+  }
+#endif
 #endif

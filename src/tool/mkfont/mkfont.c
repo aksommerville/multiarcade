@@ -51,7 +51,7 @@ static int font_text_from_glyphs(void *dstpp,const uint8_t *metrics,const uint32
     }
     APPEND("\n")
   }
-  APPEND("  },\n}\n")
+  APPEND("  },\n};\n")
   
   #undef APPEND
   *(void**)dstpp=dst;

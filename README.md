@@ -6,11 +6,12 @@ Tiny: https://tinycircuits.com/
 
 ## TODO
 
-- [ ] tinyarcade
+- [x] tinyarcade
 - [x] linuxdefault
 - [x] raspi
 - [x] linuxdrm
 - [x] generic
+- [ ] Validate color conversions
 - [ ] Test framework
 - [ ] Example game
 - [ ] Coordinate SD card image from Makefile
