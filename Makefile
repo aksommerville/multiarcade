@@ -12,9 +12,9 @@ include src/data/Makefile
 data:$(DATA_DSTFILES) $(DATA_TSV)
 all:data
 
-#include src/test/Makefile TODO
-#test:...
-#test-%:...
+include src/test/Makefile
+test:$(TEST_EXES);etc/tool/testrunner.sh $(TEST_EXES)
+test-%:$(TEST_EXES);MA_TEST_FILTER="$*" etc/tool/testrunner.sh $(TEST_EXES)
 
 ifneq (,$(MA_BUILD_TINY))
   include src/platform/tinyarcade/Makefile
@@ -30,3 +30,5 @@ ifneq (,$(MA_BUILD_NATIVE))
 endif
 
 clean:;rm -rf mid out
+
+project:;etc/tool/mkproject.sh
