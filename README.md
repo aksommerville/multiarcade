@@ -37,5 +37,5 @@ Run one test: `make test-NAME`
 - [ ] Example game
 - [x] Coordinate SD card image from Makefile
 - [ ] Auto-re-deploy menu via Makefile
-- [ ] raspi bcm: Need a blotter layer to cover console
+- [x] raspi bcm: Need a blotter layer to cover console
 - [ ] Synthesizer? Or some layer of audio support.

@@ -20,6 +20,8 @@ struct ma_bcm {
   #if MA_PIXELSIZE==8
     uint32_t ctab[256];
   #endif
+  
+  uint32_t blotter_storage;
 };
 
 /* Vsync.
@@ -79,6 +81,26 @@ static int ma_bcm_measure_screen(VC_RECT_T *dstr,struct ma_bcm *bcm) {
   return scale;
 }
 
+/* Create a layer the size of the entire screen, since the Tiny's screen is
+ * very unlikely to have the same aspect ratio as your TV.
+ * Without this, edges of the console show through, it's ugly.
+ */
+ 
+static void ma_bcm_apply_blotter(struct ma_bcm *bcm) {
+  bcm->blotter_storage=0;
+  DISPMANX_RESOURCE_HANDLE_T res=vc_dispmanx_resource_create(
+    VC_IMAGE_XRGB8888,1,1,&bcm->blotter_storage
+  );
+  if (!res) return;
+  VC_RECT_T dstr={0,0,bcm->screenw,bcm->screenh};
+  VC_RECT_T srcr={0,0,0x10000,0x10000};
+  VC_DISPMANX_ALPHA_T alpha={DISPMANX_FLAGS_ALPHA_FIXED_ALL_PIXELS,0xff};
+  DISPMANX_ELEMENT_HANDLE_T element=vc_dispmanx_element_add(
+    bcm->vcupdate,bcm->vcdisplay,1,&dstr,bcm->vcresource,&srcr,DISPMANX_PROTECTION_NONE,&alpha,0,0
+  );
+  if (!element) return;
+}
+
 /* Initialize VideoCore, etc.
  */
  
@@ -110,10 +132,12 @@ static int ma_bcm_vc_init(struct ma_bcm *bcm) {
     fbformat,bcm->fbw*bcm->scale,bcm->fbh*bcm->scale,bcm->fb
   ))) return -1;
 
-  VC_DISPMANX_ALPHA_T alpha={DISPMANX_FLAGS_ALPHA_FIXED_ALL_PIXELS,0xffffffff};
+  VC_DISPMANX_ALPHA_T alpha={DISPMANX_FLAGS_ALPHA_FIXED_ALL_PIXELS,0xff};
   if (!(bcm->vcelement=vc_dispmanx_element_add(
     bcm->vcupdate,bcm->vcdisplay,1,&dstr,bcm->vcresource,&srcr,DISPMANX_PROTECTION_NONE,&alpha,0,0
   ))) return -1;
+  
+  ma_bcm_apply_blotter(bcm);
 
   if (vc_dispmanx_update_submit_sync(bcm->vcupdate)<0) return -1;
 
