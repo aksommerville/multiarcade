@@ -20,6 +20,8 @@ Build for Tiny and launch via USB: `make launch`
 
 Build for Tiny and interactively prepare SD card: `make sdcard`
 
+Re-deploy menu (using `make launch` deletes it): `make deploy-menu`
+
 Run tests: `make test`
 
 Run one test: `make test-NAME`
@@ -36,6 +38,6 @@ Run one test: `make test-NAME`
 - [x] Test framework
 - [ ] Example game
 - [x] Coordinate SD card image from Makefile
-- [ ] Auto-re-deploy menu via Makefile
+- [x] Auto-re-deploy menu via Makefile
 - [x] raspi bcm: Need a blotter layer to cover console
 - [ ] Synthesizer? Or some layer of audio support.
