@@ -41,8 +41,8 @@ void ma_image_blit(
   const struct ma_image *src
 ) {
   int16_t w=src->w,h=src->h,srcx=0,srcy=0;
-  if (dstx<0) { srcy+=dsty; if ((w+=dstx)<1) return; }
-  if (dsty<0) { srcy+=dsty; if ((h+=dsty)<1) return; }
+  if (dstx<0) { srcx-=dstx; if ((w+=dstx)<1) return; dstx=0; }
+  if (dsty<0) { srcy-=dsty; if ((h+=dsty)<1) return; dsty=0; }
   if (dstx>dst->w-w) { if ((w=dst->w-dstx)<1) return; }
   if (dsty>dst->h-h) { if ((h=dst->h-dsty)<1) return; }
   ma_pixel_t *dstrow=dst->v+dsty*dst->stride+dstx;
