@@ -36,7 +36,7 @@ fi
 echo ""
 
 mkdir "$DSTDIR" || exit 1
-cp -r Makefile src etc "$DSTDIR" || exit 1
+cp -r Makefile src etc .gitignore "$DSTDIR" || exit 1
 echo "# $PROJECT_NAME" >"$DSTDIR/README.md"
 git init "$DSTDIR" || exit 1
 echo "$DSTDIR: Created new Multiarcade project."
